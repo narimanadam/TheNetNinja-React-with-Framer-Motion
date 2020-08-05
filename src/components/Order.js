@@ -1,0 +1,75 @@
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
+const containerVariants = {
+  hidden: {
+    opacity: 0,
+    x: "100vw",
+  },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      type: "spring",
+      mass: 0.4, // higher the slower the animation moves and the lower is the quicker
+      damping: 8, // the strength of the opposing force, a higher number mean less oscilation
+      when: "beforeChildren", // complete this animation before children animation occurs
+      staggerChildren: 0.4, // animation delay between children one after another
+    },
+  },
+  exit: {
+    x: "-100vw",
+    transition: { ease: "easeInOut" },
+  },
+};
+
+const childVariants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+  },
+};
+
+const Order = ({ pizza, setShowModal }) => {
+  const [showTitle, setShowTitle] = useState(true);
+  useEffect(() => {
+    setTimeout(() => {
+      setShowModal(true);
+    }, 5000);
+  }, [setShowModal]);
+
+  setTimeout(() => {
+    setShowTitle(false);
+  }, 4000);
+
+  return (
+    <motion.div
+      className="container order"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
+      <AnimatePresence>
+        {showTitle && (
+          <motion.h2 exit={{ opacity: 0 }}>
+            Thank you for your order :)
+          </motion.h2>
+        )}
+      </AnimatePresence>
+      <motion.p variants={childVariants}>
+        You ordered a {pizza.base} pizza with:
+      </motion.p>
+
+      <motion.div variants={childVariants}>
+        {pizza.toppings.map((topping) => (
+          <div key={topping}>{topping}</div>
+        ))}
+      </motion.div>
+    </motion.div>
+  );
+};
+
+export default Order;
